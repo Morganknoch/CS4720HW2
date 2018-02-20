@@ -10,7 +10,7 @@ def MahalanobisDistance(covariance, mean, dimension, x):
     # This function takes a covariance, mean, dimension and sample
 
     # Probably will need to actually do the matrix inversion by hand
-    cov = covariance
+
     invertedCovariance = np.identity(dimension)
 
     covariance = copy.deepcopy(covariance)
@@ -23,46 +23,42 @@ def MahalanobisDistance(covariance, mean, dimension, x):
         # see if first number is not one
         if covariance[i][i] != 1:
             # divide row by number
-            holdLeadingNum = covariance[i][i]
             for j in range(dimension):
-                invertedCovariance[i][j] /= holdLeadingNum
-                covariance[i][j] /= holdLeadingNum
+                invertedCovariance[i][j] /= covariance[i][i]
+                covariance[i][j] /= covariance[i][i]
 
         currentRow += 1
         # subtract row from remaining rows
         for k in range(currentRow, dimension):
             # subtract first number times the subtracted original row
-            holdNum = covariance[k][currentColumn]
-            if holdNum != 0:
+            if covariance[currentRow][currentColumn] != 0:
                 for l in range(dimension):
-                    invertedCovariance[k][l] = invertedCovariance[k][l] - (holdNum * invertedCovariance[i][l])
-                    covariance[k][l] = covariance[k][l] - (holdNum * covariance[i][l])
+                    invertedCovariance[k][l] = invertedCovariance[k][l] - (covariance[k][currentColumn] * invertedCovariance[i][l])
+                    covariance[k][l] = covariance[k][l] - (covariance[k][currentColumn] * covariance[i][l])
 
         currentColumn += 1
 
     # go back up to first row
     currentColumn -= 1
-    currentRow -= 1
     for i in range(dimension - 1, -1, -1):
         # see if first number is not one
         if covariance[i][i] != 1:
             # divide row by number
-            holdLeadingNum = covariance[i][i]
             for j in range(dimension-1, -1, -1):
-                invertedCovariance[i][j] /= holdLeadingNum
-                covariance[i][j] /= holdLeadingNum
+                invertedCovariance[i][j] /= covariance[i][i]
 
         currentRow -= 1
         # subtract row from remaining rows
-        for k in range(currentRow, -1, -1):
+        for k in range(currentRow, 0, -1):
             # subtract first number times the subtracted original row
-            holdNum = covariance[k][currentColumn]
-            if holdNum != 0:
+            if covariance[currentRow][currentColumn] != 0:
                 for l in range(dimension):
-                    invertedCovariance[k][l] = invertedCovariance[k][l] - (holdNum * invertedCovariance[i][l])
-                    covariance[k][l] = covariance[k][l] - (holdNum * covariance[i][l])
+                    invertedCovariance[k][l] = invertedCovariance[k][l] - (covariance[k][currentColumn] * invertedCovariance[i][l])
 
         currentColumn -= 1
+
+    invertedCovariance1 = np.linalg.inv(covariance)
+
 
     return np.matmul(np.matmul((x - mean).T, invertedCovariance), (x - mean))
 

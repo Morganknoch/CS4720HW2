@@ -57,17 +57,89 @@ def DiscriminantFunction(covariance, mean, dimension, priorProbability, x):
 
     return (-.5 * (MahalanobisDistance(covariance, mean, dimension, x))) - (dimension / 2)*(math.log((2*math.pi))) - (.5 * np.log(np.absolute(covariance))) + math.log(priorProbability)
 
+# find mean
+def findMean(data):
+    mean = []
+    for i in data:
+        numinrow = 0
+        totalrow = 0
+        for j in i:
+            numinrow += 1
+            totalrow += j
+        mean.append((totalrow / numinrow))
+    return mean
+
+def findCovariance(data, mean):
+    dataFlipped = np.array(data)
+    dataFlipped = dataFlipped.T
+
+    meanarray = np.array(mean)
+    
+    numdata = 0
+
+    covariance = np.zeros((2,2))
+    
+    for i in dataFlipped:
+        newarray = np.array(i)
+        
+        ximinusmean = np.subtract(newarray, meanarray)
+        ximinusmean = ximinusmean.reshape(2,1)
+        ximinusmeantranspose = ximinusmean.T    
+
+        covariance += np.matmul(ximinusmean, ximinusmeantranspose)
+
+        numdata += 1
+
+    return covariance/numdata 
 
 
 
 
 
-# calculate mean and covariance for every class
+
+# NUMBER 1 part c
+
+# Upload class data for Number 1 part c
+data = scipy.io.loadmat("data_class3.mat")
+
+newdata = data['Data']
+
+firstClass = newdata[0][0]
+secondClass = newdata[0][1]
+thirdClass = newdata[0][2]
+
+# find the mean for each class
+firstClassMean = findMean(firstClass)
+secondClassMean = findMean(secondClass)
+thirdClassMean = findMean(thirdClass)
 
 
+# find the covariance for each class
+firstClassCov = findCovariance(firstClass, firstClassMean)
+secondClassCov = findCovariance(secondClass, secondClassMean)
+thirdClassCov = findCovariance(thirdClass, thirdClassMean)
+
+# declare prior probabilities
+firstClassPriorProb = 0.6
+secondClassPriorProb = 0.2
+thirdClassPriorProb = 0.2
+
+# declare x's to be classified
+x1 = np.array([1,3,2])
+x1.shape = (3,1)
+
+x2 = np.array([4,6,1])
+x2.shape = (3,1)
+
+x3 = np.array([7,-1,0])
+x3.shape = (3,1)
+
+x4 = np.array([-2,6,5])
+x4.shape = (3,1)
 
 
-# classify points
+# classify points (use the discriminant functions to classify)
+
 
 
 

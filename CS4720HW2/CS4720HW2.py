@@ -51,9 +51,40 @@ def MahalanobisDistance(covariance, mean, dimension, x):
 
         currentColumn -= 1
 
-    return np.matmul(np.matmul((x - mean).T, np.linalg.inv(covariance)), (x - mean))
+    return np.matmul(np.matmul((x - mean).T, invertedCovariance, (x - mean)))
+
+def DiscriminantFunction(covariance, mean, dimension, priorProbability, x):
+
+    return (-.5 * (MahalanobisDistance(covariance, mean, dimension, x))) - (dimension / 2)*(math.log((2*math.pi))) - (.5 * np.log(np.absolute(covariance))) + math.log(priorProbability)
 
 
+
+
+
+
+# calculate mean and covariance for every class
+
+
+
+
+# classify points
+
+
+
+
+
+
+
+# generate gaussian examples
+
+
+
+# derive decision boundary
+
+
+
+
+# plot decision boundary
 
 
 

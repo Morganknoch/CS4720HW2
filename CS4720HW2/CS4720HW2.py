@@ -5,6 +5,7 @@ import scipy.io
 import numpy as np
 import math
 import copy
+import matplotlib.pyplot as plt
 
 def MahalanobisDistance(covariance, mean, dimension, x):
     # This function takes a covariance, mean, dimension and sample
@@ -192,13 +193,25 @@ samplesClass1 = samplesClass1.T
 samplesClass2 = np.random.multivariate_normal(mean2, cov2, size=500)
 samplesClass2 = samplesClass2.T
 
+# find the mean and covariance of the two classes again
+samplesClass1Mean = np.array(findMean(samplesClass1))
+samplesClass2Mean = np.array(findMean(samplesClass2))
+
+samplesClass1Cov = findCovariance(samplesClass1, samplesClass1Mean, 2)
+samplesClass2Cov = findCovariance(samplesClass2, samplesClass2Mean, 2)
+
+
+
+
 # derive decision boundary
+# Find the line that divides the two classes
 
 
+## FInd the 
 
 
 # plot decision boundary
-
+# use sciplot3d for plotting
 
 
 

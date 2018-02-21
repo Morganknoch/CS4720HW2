@@ -64,11 +64,15 @@ def MahalanobisDistance(covariance, mean, dimension, x):
 
         currentColumn -= 1
 
-    return np.matmul(np.matmul((x - mean).T, invertedCovariance), (x - mean))
+    mean.shape = (3,1)
+    
+    num = np.matmul(np.matmul((x - mean).T, invertedCovariance), (x - mean))
+
+    return num
 
 def DiscriminantFunction(covariance, mean, dimension, priorProbability, x):
 
-    return (-.5 * (MahalanobisDistance(covariance, mean, dimension, x))) - (dimension / 2)*(math.log((2*math.pi))) - (.5 * np.log(np.absolute(covariance))) + math.log(priorProbability)
+    return (-.5 * (MahalanobisDistance(covariance, mean, dimension, x))) - (dimension / 2)*(math.log((2*math.pi))) - (.5 * np.log(np.linalg.det(covariance))) + math.log(priorProbability)
 
 # find mean
 def findMean(data):
@@ -117,10 +121,9 @@ secondClass = newdata[0][1]
 thirdClass = newdata[0][2]
 
 # find the mean for each class
-firstClassMean = findMean(firstClass)
-secondClassMean = findMean(secondClass)
-thirdClassMean = findMean(thirdClass)
-
+firstClassMean = np.array(findMean(firstClass))
+secondClassMean = np.array(findMean(secondClass))
+thirdClassMean = np.array(findMean(thirdClass))
 
 # find the covariance for each class
 firstClassCov = findCovariance(firstClass, firstClassMean, 3)
@@ -146,19 +149,48 @@ x4 = np.array([-2,6,5])
 x4.shape = (3,1)
 
 
-# classify points (use the discriminant functions to classify)
+# classify points (use the discriminant function to classify) ###########################################
 
-result = DiscriminantFunction(firstClassCov, firstClassMean, 3, firstClassPriorProb, x1)
+g1x1 = DiscriminantFunction(firstClassCov, firstClassMean, 3, firstClassPriorProb, x1)
+g2x1 = DiscriminantFunction(secondClassCov, secondClassMean, 3, secondClassPriorProb, x1)
+g3x1 = DiscriminantFunction(thirdClassCov, thirdClassMean, 3, thirdClassPriorProb, x1)
 
-print('Done')
+a = max(g1x1,g2x1, g3x1)
+
+g1x2 = DiscriminantFunction(firstClassCov, firstClassMean, 3, firstClassPriorProb, x2)
+g2x2 = DiscriminantFunction(secondClassCov, secondClassMean, 3, secondClassPriorProb, x2)
+g3x2 = DiscriminantFunction(thirdClassCov, thirdClassMean, 3, thirdClassPriorProb, x2)
+
+b = max(g1x2,g2x2, g3x2)
+
+g1x3 = DiscriminantFunction(firstClassCov, firstClassMean, 3, firstClassPriorProb, x3)
+g2x3 = DiscriminantFunction(secondClassCov, secondClassMean, 3, secondClassPriorProb, x3)
+g3x3 = DiscriminantFunction(thirdClassCov, thirdClassMean, 3, thirdClassPriorProb, x3)
+
+c = max(g1x3,g2x3, g3x3)
+
+g1x4 = DiscriminantFunction(firstClassCov, firstClassMean, 3, firstClassPriorProb, x4)
+g2x4 = DiscriminantFunction(secondClassCov, secondClassMean, 3, secondClassPriorProb, x4)
+g3x4 = DiscriminantFunction(thirdClassCov, thirdClassMean, 3, thirdClassPriorProb, x4)
+
+d = max(g1x4,g2x4, g3x4)
 
 
-
-
+################## QUESTION 2 PART 1 ########################
 
 # generate gaussian examples
+mean1 = np.array([8,2])
+mean1.shape = (2,)
+mean2 = np.array([2,8])
+mean2.shape = (2,)
+cov1 = np.array([[4.1, 0], [0,2.8]])
+cov2 = cov1
 
+samplesClass1 = np.random.multivariate_normal(mean1, cov1, size=500)
+samplesClass1 = samplesClass1.T
 
+samplesClass2 = np.random.multivariate_normal(mean2, cov2, size=500)
+samplesClass2 = samplesClass2.T
 
 # derive decision boundary
 
